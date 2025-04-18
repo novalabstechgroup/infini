@@ -1,0 +1,7 @@
+[
+    { "label": "Home", "path": "/" },
+    { "label": "place1", "path": "/place1" },
+    { "label": "place2", "path": "/place2" },
+    { "label": "place3", "path": "/place3" },
+    { "label": "AboutUs", "path": "/AboutUs" }
+]

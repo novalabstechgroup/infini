@@ -1,0 +1,158 @@
+
+/* Section 1: Landing Page */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Roboto', sans-serif;
+  }
+
+/* Section 1: Landing Page */
+.landingSection {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Add a dark overlay to make any text more readable if needed */
+.landingSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3); /* Adjust opacity as needed */
+  z-index: 1;
+}
+
+/* Ensure content stays above the overlay */
+.landingSection > * {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center !important;
+  padding: 20px;
+  width: 100%;
+  }
+  
+  .landingTitle {
+    font-size: 3rem !important;
+    font-weight: bold !important;
+    margin-bottom: 30px !important; /* Added spacing between title and button */
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+  /* Section 2: Banner */
+  .bannerSection {
+    background: #111;
+    padding: 40px 20px;
+    text-align: center;
+    box-shadow: 0px 0px 15px cyan;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .bannerGrid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    width: 100%;
+  }
+  
+  .bannerItem {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 0px 10px magenta;
+    transition: transform 0.3s;
+    flex: 1 1 300px;
+    text-align: center;
+  }
+  
+  .bannerItem:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Section 3: Large Rectangular Info Sections */
+  .infoSection {
+    background: #222;
+    padding: 80px 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height: 50vh;
+    justify-content: center;
+  }
+  
+  .infoContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    max-width: 1200px;
+    width: 100%;
+    gap: 20px; /* Added gap between items */
+  }
+  
+  .infoBox {
+    background: rgba(0, 0, 0, 0.9);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 0px 15px cyan;
+    transition: transform 0.3s ease-in-out;
+    flex: 1 1 300px;
+    margin: 10px;
+    text-align: center;
+  }
+  
+  .infoBox:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 0px 25px magenta;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .landingTitle {
+      font-size: 2rem;
+    }
+  
+    .landingButton {
+      padding: 8px 16px;
+    }
+  
+    .bannerGrid {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .infoContainer {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .infoBox {
+      width: 100%;
+      max-width: 400px;
+    }
+  }

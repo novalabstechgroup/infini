@@ -1,0 +1,39 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: white;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-toolbar {
+  max-width: 1200px;
+  margin: auto;
+  width: 100%;
+  padding: 0 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-logo {
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: #000;
+}
+
+.desktop-menu {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .desktop-menu {
+    display: flex;
+    gap: 24px;
+  }
+
+  .mobile-menu {
+    display: none;
+  }
+}
