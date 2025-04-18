@@ -51,28 +51,6 @@ const PropertiesSection: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [activeLocationData, currentPair]);
 
-  useEffect(() => {
-    const autoSlide = () => {
-      if (currentPair < totalPairs) {
-        setCurrentPair(prev => prev + 1);
-      } else {
-        setCurrentPair(0);
-      }
-    };
-
-    if (autoPlayRef.current) {
-      clearInterval(autoPlayRef.current);
-    }
-
-    autoPlayRef.current = setInterval(autoSlide, 3000);
-    
-    return () => {
-      if (autoPlayRef.current) {
-        clearInterval(autoPlayRef.current);
-      }
-    };
-  }, [totalPairs, activeLocation]);
-
   return (
     <Box className={styles.propertiesSection}>
       <Container maxWidth="lg">
