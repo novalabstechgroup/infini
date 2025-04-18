@@ -5,17 +5,20 @@ import styles from './PropertiesSection.module.css';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import RoomTypesSection from '../rooms/RoomTypesSection';
 
 // Remove unused getCurrentSlides function
 const PropertiesSection: React.FC = () => {
-  const [activeLocation, setActiveLocation] = useState<string>(locationData[0].id);
+  const [activeLocation, setActiveLocation] = useState<Location | null>(locationData[0]);
+  const [activePropertyId, setActivePropertyId] = useState<string | null>(locationData[0].images[0]?.id || null);
   const [currentPair, setCurrentPair] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const autoPlayRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Remove incorrect comment since getCurrentSlides is used
-  const activeLocationData = locationData.find((loc: Location) => loc.id === activeLocation);
+  // Fix type comparison
+  const activeLocationData = locationData.find((loc: Location) => loc.id === activeLocation?.id);
   const itemsPerView = isMobile ? 1 : 2;
   const totalPairs = Math.ceil((activeLocationData?.images?.length || 0) / itemsPerView);
 
@@ -23,38 +26,27 @@ const PropertiesSection: React.FC = () => {
   const handleNextSlide = () => setCurrentPair((prev) => (prev + 1) % totalPairs);
   const handlePrevSlide = () => setCurrentPair((prev) => prev === 0 ? totalPairs - 1 : prev - 1);
 
+  // Fix type mismatch
   const handleLocationClick = (locationId: string) => {
-    setActiveLocation(locationId);
-    setCurrentPair(0);
+    const location = locationData.find(loc => loc.id === locationId);
+    if (location) {
+      setActiveLocation(location);
+      setActivePropertyId(location.images[0]?.id || null);
+      setCurrentPair(0);
+    }
     if (autoPlayRef.current) {
       clearInterval(autoPlayRef.current);
       autoPlayRef.current = null;
     }
   };
-<Box className={styles.slider} ref={sliderRef}>
-  <Box 
-    className={styles.sliderTrack}
-    style={{
-      transform: `translateX(-${currentPair * 100}%)`,
-      display: 'grid',
-      gridTemplateColumns: `repeat(${activeLocationData?.images?.length || 0}, ${isMobile ? '100%' : '50%'})`,
-      gap: '20px'
-    }}
-  >
-    {activeLocationData?.images?.map((image) => (
-      <Box
-        key={image.id}
-        className={styles.slide}
-        style={{ backgroundImage: `url(${image.imageUrl})` }}
-      >
-        <Box className={styles.propertyInfo}>
-          <Typography variant="h6">{image.propertyName}</Typography>
-          <Typography variant="body2">{image.description}</Typography>
-        </Box>
-      </Box>
-    ))}
-  </Box>
-</Box>
+  const handlePropertyClick = (propertyId: string) => {
+    setActivePropertyId(propertyId);
+    if (autoPlayRef.current) {
+      clearInterval(autoPlayRef.current);
+      autoPlayRef.current = null;
+    }
+  };
+
   const getCurrentSlides = () => {
     if (!activeLocationData?.images?.length) return [];
     const startIndex = currentPair * itemsPerView;
@@ -75,107 +67,104 @@ const PropertiesSection: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [activeLocationData, currentPair]);
 
-  useEffect(() => {
-    // Initialize autoplay on component mount
-    autoPlayRef.current = setInterval(() => {
-      setCurrentPair(prev => (prev + 1) % totalPairs);
-    }, 3000);
-    
-    return () => {
-      if (autoPlayRef.current) clearInterval(autoPlayRef.current);
-    };
-  }, [totalPairs]);
-
   return (
-    <Box className={styles.propertiesSection}>
-      <Container maxWidth="lg">
-        <Typography variant="h2" className={styles.sectionTitle}>
-          OUR PROPERTIES
-        </Typography>
-        <Typography variant="subtitle1" className={styles.sectionSubtitle}>
-          Discover properties in various Malaysian states. Your dream home awaits!
-        </Typography>
+    <>
+      <Box className={styles.propertiesSection}>
+        <Container maxWidth="lg">
+          <Typography variant="h2" className={styles.sectionTitle}>
+            OUR PROPERTIES
+          </Typography>
+          <Typography variant="subtitle1" className={styles.sectionSubtitle}>
+            Discover properties in various Malaysian states. Your dream home awaits!
+          </Typography>
 
-        <Box className={styles.locationButtons}>
-          {locationData.map((location) => (
-            <Button
-              key={location.id}
-              onClick={() => handleLocationClick(location.id)}
-              className={`${styles.locationButton} ${
-                activeLocation === location.id ? styles.active : ''
-              }`}
-              startIcon={<LocationOnIcon className={styles.locationIcon} />}
-            >
-              {location.name}
-            </Button>
-          ))}
-        </Box>
-
-        <Box 
-          className={styles.sliderContainer}
-          onMouseEnter={() => {
-            if (autoPlayRef.current) clearInterval(autoPlayRef.current);
-            autoPlayRef.current = null;
-          }}
-          onMouseLeave={() => {
-            autoPlayRef.current = setInterval(() => {
-              setCurrentPair(prev => (prev + 1) % totalPairs);
-            }, 3000);
-          }}
-        >
-          <Button 
-            className={`${styles.navButton} ${styles.prevButton}`}
-            onClick={handlePrevSlide}
-            disabled={false}
-          >
-            <NavigateBeforeIcon />
-          </Button>
-
-          <Box className={styles.slider} ref={sliderRef}>
-            <Box 
-              className={styles.sliderTrack}
-              style={{
-                transform: `translateX(-${currentPair * 100}%)`,
-                display: 'grid',
-                gridTemplateColumns: `repeat(${activeLocationData?.images?.length || 0}, ${isMobile ? '100%' : '50%'})`,
-                gap: '20px'
-              }}
-            >
-              {activeLocationData?.images?.map((image) => (
-                <Box
-                  key={image.id}
-                  className={styles.slide}
-                  style={{ backgroundImage: `url(${image.imageUrl})` }}
-                >
-                  <Box className={styles.propertyInfo}>
-                    <Typography variant="h6">{image.propertyName}</Typography>
-                    <Typography variant="body2">{image.description}</Typography>
-                  </Box>
-                </Box>
-              ))}
-            </Box>
+          <Box className={styles.locationButtons}>
+            {locationData.map((location) => (
+              <Button
+                key={location.id}
+                onClick={() => handleLocationClick(location.id)}
+                className={`${styles.locationButton} ${
+                  activeLocation?.id === location.id ? styles.active : ''
+                }`}
+                startIcon={<LocationOnIcon className={styles.locationIcon} />}
+              >
+                {location.name}
+              </Button>
+            ))}
           </Box>
 
-          <Button 
-            className={`${styles.navButton} ${styles.nextButton}`}
-            onClick={handleNextSlide}
-            disabled={false}
+          <Box 
+            className={styles.sliderContainer}
+            onMouseEnter={() => {
+              if (autoPlayRef.current) clearInterval(autoPlayRef.current);
+              autoPlayRef.current = null;
+            }}
+            onMouseLeave={() => {
+              if (!autoPlayRef.current) {
+                autoPlayRef.current = setInterval(() => {
+                  setCurrentPair(prev => (prev + 1) % totalPairs);
+                }, 3000);
+              }
+            }}
           >
-            <NavigateNextIcon />
-          </Button>
-        </Box>
+            <Button 
+              className={`${styles.navButton} ${styles.prevButton}`}
+              onClick={handlePrevSlide}
+            >
+              <NavigateBeforeIcon />
+            </Button>
 
-        <Box className={styles.dots}>
-          {[...Array(totalPairs)].map((_, index) => (
-            <span
-              key={index}
-              className={`${styles.dot} ${currentPair === index ? styles.activeDot : ''}`}
-              onClick={() => setCurrentPair(index)}
-            />
-          ))}
-        </Box>
-      </Container>
-    </Box>
+            <Box className={styles.slider} ref={sliderRef}>
+              <Box 
+                className={styles.sliderTrack}
+                style={{
+                  transform: `translateX(-${currentPair * 100}%)`,
+                  display: 'grid',
+                  gridTemplateColumns: `repeat(${activeLocationData?.images?.length || 0}, ${isMobile ? '100%' : '50%'})`,
+                  gap: '20px'
+                }}
+              >
+                {activeLocationData?.images?.map((image) => (
+                  <Box
+                    key={image.id}
+                    className={styles.slide}
+                    style={{ backgroundImage: `url(${image.imageUrl})` }}
+                    onClick={() => handlePropertyClick(image.id)}
+                  >
+                    <Box className={styles.propertyInfo}>
+                      <Typography variant="h6">{image.propertyName}</Typography>
+                      <Typography variant="body2">{image.description}</Typography>
+                    </Box>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+
+            <Button 
+              className={`${styles.navButton} ${styles.nextButton}`}
+              onClick={handleNextSlide}
+            >
+              <NavigateNextIcon />
+            </Button>
+          </Box>
+
+          <Box className={styles.dots}>
+            {[...Array(totalPairs)].map((_, index) => (
+              <span
+                key={index}
+                className={`${styles.dot} ${currentPair === index ? styles.activeDot : ''}`}
+                onClick={() => setCurrentPair(index)}
+              />
+            ))}
+          </Box>
+        </Container>
+      </Box>
+      
+      <RoomTypesSection 
+        activeLocation={activeLocationData || null}
+        activePropertyId={activePropertyId}
+      />
+    </>
   );
 };
 
