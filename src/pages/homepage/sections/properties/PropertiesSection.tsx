@@ -14,6 +14,7 @@ const PropertiesSection: React.FC = () => {
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const autoPlayRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Remove incorrect comment since getCurrentSlides is used
   const activeLocationData = locationData.find((loc: Location) => loc.id === activeLocation);
   const itemsPerView = isMobile ? 1 : 2;
   const totalPairs = Math.ceil((activeLocationData?.images?.length || 0) / itemsPerView);
@@ -30,7 +31,30 @@ const PropertiesSection: React.FC = () => {
       autoPlayRef.current = null;
     }
   };
-
+<Box className={styles.slider} ref={sliderRef}>
+  <Box 
+    className={styles.sliderTrack}
+    style={{
+      transform: `translateX(-${currentPair * 100}%)`,
+      display: 'grid',
+      gridTemplateColumns: `repeat(${activeLocationData?.images?.length || 0}, ${isMobile ? '100%' : '50%'})`,
+      gap: '20px'
+    }}
+  >
+    {activeLocationData?.images?.map((image) => (
+      <Box
+        key={image.id}
+        className={styles.slide}
+        style={{ backgroundImage: `url(${image.imageUrl})` }}
+      >
+        <Box className={styles.propertyInfo}>
+          <Typography variant="h6">{image.propertyName}</Typography>
+          <Typography variant="body2">{image.description}</Typography>
+        </Box>
+      </Box>
+    ))}
+  </Box>
+</Box>
   const getCurrentSlides = () => {
     if (!activeLocationData?.images?.length) return [];
     const startIndex = currentPair * itemsPerView;
@@ -50,6 +74,17 @@ const PropertiesSection: React.FC = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [activeLocationData, currentPair]);
+
+  useEffect(() => {
+    // Initialize autoplay on component mount
+    autoPlayRef.current = setInterval(() => {
+      setCurrentPair(prev => (prev + 1) % totalPairs);
+    }, 3000);
+    
+    return () => {
+      if (autoPlayRef.current) clearInterval(autoPlayRef.current);
+    };
+  }, [totalPairs]);
 
   return (
     <Box className={styles.propertiesSection}>
@@ -131,7 +166,7 @@ const PropertiesSection: React.FC = () => {
         </Box>
 
         <Box className={styles.dots}>
-          {[...Array(totalPairs + 1)].map((_, index) => (
+          {[...Array(totalPairs)].map((_, index) => (
             <span
               key={index}
               className={`${styles.dot} ${currentPair === index ? styles.activeDot : ''}`}

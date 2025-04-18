@@ -65,11 +65,13 @@
 
 .sliderContainer {
   position: relative;
-  width: 100%;
+  width: 95%; /* Increased from 90% to 95% for wider slider */
+  max-width: 1400px; /* Increased max-width from 1200px to 1400px */
   height: clamp(250px, 50vw, 400px);
-  margin: 0 auto;
+  margin: 40px auto; /* Combined the margin settings from both definitions */
   overflow: hidden;
   border-radius: 12px;
+  z-index: 1; /* Added z-index to ensure proper stacking */
 }
 
 .slider {
@@ -204,6 +206,11 @@
     gap: 0;
   }
 
+  .slide {
+    width: 100vw;
+    margin: 0 auto;
+  }
+
   .locationButtons {
     overflow-x: auto;
     justify-content: flex-start;
@@ -312,11 +319,12 @@
   background-color: rgba(0, 123, 108, 0.08) !important;
 }
 
-.sliderContainer {
+/* Remove or comment out this duplicate definition later in the file */
+/* .sliderContainer {
   position: relative;
   overflow: hidden;
   margin: 40px 0;
-}
+} */
 
 .navButton {
   position: absolute;
